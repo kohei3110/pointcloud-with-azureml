@@ -10,3 +10,4 @@ dependencies:
     - scikit-learn
     - mlflow
     - azureml-core
+    - azureml-mlflow
