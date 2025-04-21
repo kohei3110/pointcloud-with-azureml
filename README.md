@@ -33,12 +33,12 @@ project-root/
 │       └── score.py                # AzureML スコアリング (init/run)
 |
 ├── notebooks/
-│   ├── 00_semantickitti_prep.ipynb   # データセットダウンロード & 前処理
-│   ├── 01_setup_aml_mlflow.ipynb     # AML & MLflow の接続設定
-│   ├── 02_register_dataset.ipynb     # データセット登録
-│   ├── 03_experiment_train_log.ipynb # 学習 & MLflow 実験記録
-│   ├── 04_deploy_aci.ipynb           # ACI デプロイ
-│   └── 05_invoke_endpoint.ipynb      # エンドポイント呼び出しテスト
+│   ├── 00_semantickitti_prep.ipynb                    # データセットダウンロード & 前処理
+│   ├── 01_setup_aml_mlflow.ipynb                      # AML & MLflow の接続設定
+│   ├── 02_register_dataset.ipynb                      # データセット登録
+│   ├── 03_experiment_train_log.ipynb                  # 学習 & MLflow 実験記録
+│   ├── 04_deploy_to_managed_online_endpoint.ipynb     # ACI デプロイ
+│   └── 05_invoke_endpoint.ipynb                       # エンドポイント呼び出しテスト
 |
 └── README.md                        # 本ファイル
 ```
