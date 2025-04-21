@@ -11,3 +11,5 @@ dependencies:
     - mlflow
     - azureml-core
     - azureml-mlflow
+    - azureml-inference-server-http
+    - azure-ai-ml
