@@ -1,0 +1,86 @@
+# Python関連
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Azure ML関連
+.azureml/azureml_run.*
+.azureml/.amlignore
+.azureml/config.json
+outputs/
+mlruns/
+.runs/
+logs/
+.amlignore
+
+# 環境設定
+.env
+.venv
+env/
+venv/
+ENV/
+
+# データとモデル (大きいファイル)
+data/
+!data/.gitkeep
+semantic_kitti/
+*.bin
+*.label
+*.pth
+*.onnx
+*.pt
+*.pkl
+
+# ログやキャッシュ
+*.log
+logs/
+.cache/
+.local/
+
+# IDEとエディタ
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS生成ファイル
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 特定のプロジェクトファイル
+# pointcloud-with-azureml 特有の設定
+data/preprocessed/*.csv
+model_checkpoints/
+
+# Azure関連の認証情報
+.azure/
+
+# 環境変数
+*.env*
