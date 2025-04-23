@@ -53,7 +53,7 @@ project-root/
 
     - Azure Machine Learning Workspace
 
-    - ACI 用のサブスクリプションID/テナントID/クライアントID（GitHub Actions 用）
+    - エンドポイントデプロイ用 サブスクリプションID/テナントID/クライアントID（GitHub Actions 用）
 
 - `.azureml/config.json` をプロジェクト直下に配置
 
@@ -125,13 +125,13 @@ pip install -r app/requirements.txt
 
 MLflow にパラメータ・エポック毎の損失・最終精度が記録され、Azure ML モデルレジストリにも pointnet-semseg として登録されます。
 
-### 7. ACI へのデプロイ
+### 7. マネージドオンラインエンドポイントへのデプロイ
 
-ノートブック: `notebooks/04_deploy_aci.ipynb`
+ノートブック: `notebooks/04_deploy_to_managed_online_endpoint.ipynb`
 
-スクリプト: `python deployment/deploy_aci.py`
+スクリプト: `python deployment/deploy_to_managed_online_endpoint.py`
 
-どちらでも実行可能です。成功するとACI Endpoint: https://<your-endpoint> が出力されます。
+どちらでも実行可能です。成功するとマネージドオンラインエンドポイント: https://<your-endpoint> が出力されます。
 
 ### 8. 推論リクエスト
 
