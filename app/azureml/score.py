@@ -44,7 +44,15 @@ def run(raw_data):
     if isinstance(raw_data, str):
         raw_data = json.loads(raw_data)
     pc = np.array(raw_data["points"], dtype=np.float32)
+
+    # モデルは Conv1d チャネル次元 = 3、ポイント次元 = N を想定
+    # → tensor shape を (batch, channels, points) = (1, 3, N) に整形
+    input_tensor = torch.from_numpy(pc).unsqueeze(0).permute(0, 2, 1)
+
     with torch.no_grad():
-        input_tensor = torch.from_numpy(pc).unsqueeze(0)
-        preds = model(input_tensor).numpy().tolist()
-    return {"predictions": preds}
+        # 出力 logits の shape は (1, num_classes, N)
+        logits = model(input_tensor)
+        # 各ポイントのクラス予測を取得
+        preds = torch.argmax(logits, dim=1)  # shape (1, N)
+
+    return {"segmentation": preds.squeeze(0).tolist()}
