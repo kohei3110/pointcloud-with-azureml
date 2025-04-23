@@ -1,43 +1,47 @@
 import os
+import glob
 import sys
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Add project root to sys.path so “ml.models” is importable
-root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-if root not in sys.path:
-    sys.path.insert(0, root)
-# ──────────────────────────────────────────────────────────────────────────────
+# ---- insert to let Python find your top‑level ml/ package ----
+current_dir = os.path.dirname(__file__)
+repo_root = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir))
+if repo_root not in sys.path:
+    sys.path.insert(0, repo_root)
+# -------------------------------------------------------------
 
 import torch
-import json
+import torch.serialization
+import pickle
+import numpy as np
+
 from ml.models.pointnet import PointNetSeg
+torch.serialization.add_safe_globals([PointNetSeg])
 
-from azure.ai.ml import MLClient
-from azure.identity import DefaultAzureCredential
-
-ml_client = MLClient.from_config(
-    credential=DefaultAzureCredential(),
-    path=os.path.join(root, ".azureml", "config.json")
-)
-model_folder = ml_client.models.download(
-    name="PointNetFineTuned",
-    version="latest",
-    download_path=os.path.join(root, "ml", "artifacts")
-)
-weights_path = os.path.join(model_folder, "pointnet_semseg.pth")
-
-model = None
 
 def init():
     global model
-    model = PointNetSeg(num_classes=90)
-    model.load(weights_path)
+
+    model_root = os.environ.get("AZUREML_MODEL_DIR")
+    if not model_root:
+        raise EnvironmentError("AZUREML_MODEL_DIR が設定されていません")
+
+    candidates = glob.glob(os.path.join(model_root, "**", "*.pth"), recursive=True)
+    if not candidates:
+        raise FileNotFoundError(f"モデルファイルが見つかりません: {model_root}")
+    model_path = candidates[0]
+
+    # try weights_only load, fall back on full load if it errors
+    try:
+        model = torch.load(model_path, map_location="cpu", weights_only=True)
+    except (TypeError, pickle.UnpicklingError):
+        model = torch.load(model_path, map_location="cpu")
+
     model.eval()
 
+
 def run(raw_data):
-    data = json.loads(raw_data)['data']
-    inputs = torch.tensor(data).float().unsqueeze(0).transpose(1, 2)
+    pc = np.array(raw_data["points"], dtype=np.float32)
     with torch.no_grad():
-        outputs = model(inputs)
-        pred = outputs.argmax(dim=1).tolist()
-    return {"prediction": pred}
+        input_tensor = torch.from_numpy(pc).unsqueeze(0)
+        preds = model(input_tensor).numpy().tolist()
+    return {"predictions": preds}
