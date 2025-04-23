@@ -1,3 +1,4 @@
+import json
 import os
 import glob
 import sys
@@ -40,6 +41,8 @@ def init():
 
 
 def run(raw_data):
+    if isinstance(raw_data, str):
+        raw_data = json.loads(raw_data)
     pc = np.array(raw_data["points"], dtype=np.float32)
     with torch.no_grad():
         input_tensor = torch.from_numpy(pc).unsqueeze(0)
