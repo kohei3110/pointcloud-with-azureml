@@ -113,9 +113,21 @@ def query_ball_point(radius, nsample, xyz, new_xyz):
     
     # Sort and select the first nsample points
     group_idx, _ = torch.sort(group_idx, dim=-1)
-    group_first = group_idx[:, :, 0:1].repeat(1, 1, nsample)
+    group_idx = group_idx[:, :, :nsample]  # Truncate to nsample
+    
+    # If we have less than nsample points, pad with the first point
     mask = group_idx == N
-    group_idx[mask] = group_first[mask]
+    if mask.any():
+        # For each sample in batch and each query point, get the first valid index or 0
+        first_valid_idx = torch.zeros(B, S, 1, dtype=torch.long).to(device)
+        for b in range(B):
+            for s in range(S):
+                valid_idx = group_idx[b, s, group_idx[b, s] < N]
+                if valid_idx.shape[0] > 0:
+                    first_valid_idx[b, s, 0] = valid_idx[0]
+        
+        # Use broadcasting to fill masked positions with first valid indices
+        group_idx = torch.where(mask, first_valid_idx.repeat(1, 1, nsample), group_idx)
     
     return group_idx
 
